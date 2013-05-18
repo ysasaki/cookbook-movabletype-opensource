@@ -15,6 +15,7 @@ directory "/var/www/#{domain}" do
     owner "#{owner}"
     group "#{group}"
     action :create
+    recursive true
 end
 
 %w{ htdocs logs cgi-bin }.each do |dir| 
