@@ -26,11 +26,17 @@ end
     end
 end
 
-git "/var/www/#{domain}/cgi-bin" do 
+directory "/var/www/#{domain}/cgi-bin/mt" do
+    owner "#{owner}"
+    group "#{group}"
+    action :create
+    recursive true
+end
+
+git "/var/www/#{domain}/cgi-bin/mt" do 
     repository "git://github.com/movabletype/movabletype.git"
     reference "master"
     action :checkout
-    destination "/var/www/#{domain}/cgi-bin/mt"
     user "#{owner}"
     group "#{group}"
 end
