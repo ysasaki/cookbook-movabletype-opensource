@@ -26,10 +26,11 @@ end
     end
 end
 
-git "/var/www/#{domain}/cgi-bin/mt" do 
+git "/var/www/#{domain}/cgi-bin" do 
     repository "git://github.com/movabletype/movabletype.git"
     reference "master"
     action :checkout
+    destination "/var/www/#{domain}/cgi-bin/mt"
     user "#{owner}"
     group "#{group}"
 end
