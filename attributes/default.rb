@@ -15,3 +15,6 @@ default['movabletype-opensource']['dbuser'] = "movabletype"
 default['movabletype-opensource']['dbpassword'] = "movabletype"
 default['movabletype-opensource']['dbpassword'] = "movabletype"
 default['movabletype-opensource']['default_language'] = "ja"
+default['movabletype-opensource']['psgi_port'] = 8080
+default['movabletype-opensource']['perl_install_path'] = "/usr/local/perl-5.16"
+default['movabletype-opensource']['perl_version'] = "5.16.3"

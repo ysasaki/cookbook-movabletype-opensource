@@ -1,0 +1,24 @@
+#!/bin/sh
+
+# chkconfig: 2345 80 20
+
+PERL5LIB="/var/www/<%= node['movabletype-opensource']['domain'] %>/cgi-bin/mt/extlib:/var/www/<%= node['movabletype-opensource']['domain'] %>/cgi-bin/mt/lib"
+
+start_server="/usr/local/perl-5.16/bin/start_server"
+pid_file="/var/run/movabletype"
+status_file="/var/run/movabletype-status"
+
+case "$1" in 
+    start)
+        PERL5LIB=${PERL5LIB} ${start_server} --port=<%= node['movabletype-opensource']['psgi_port'] %> --signal-on-hup=QUIT --pid-file=${pid_file} --status-file=${status_file} -- /usr/local/perl-5.16/bin/plackup -s Starman -E production --workers=2 --max-reqs-per-child=10000 --interval=1 /var/www/<%= node['movabletype-opensource']['domain'] %>/cgi-bin/mt/mt.psgi &
+        ;;
+    restart)
+        PERL5LIB=${PERL5LIB} ${start_server} --restart --pid-file=${pid_file} --status-file=${status_file} && exit 0
+        ;;
+    stop)
+        kill -TERM $(cat ${pid_file}) && exit 0
+        ;;
+    *)
+        exit 2;
+        ;;
+esac

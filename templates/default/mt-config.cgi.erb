@@ -3,9 +3,10 @@ ImageDriver Imager
 #MemcachedNamespace <%= node['movabletype-opensource']['domain'] %>
 #MemcachedDriver Cache::Memcached::Fast
 #MemcachedServers localhost:11211
+ObjectDriver DBI::mysql
 StaticWebPath http://<%= node['movabletype-opensource']['domain'] %>/mt-static/
 StaticFilePath /var/www/<%= node['movabletype-opensource']['domain'] %>/htdocs/mt-static/
 Database <%= node['movabletype-opensource']['database'] %>
 DBUser <%= node['movabletype-opensource']['dbuser'] %>
-DBPassword DBUser <%= node['movabletype-opensource']['dbpassword'] %>
+DBPassword <%= node['movabletype-opensource']['dbpassword'] %>
 DefaultLanguage <%= node['movabletype-opensource']['default_language'] %>
