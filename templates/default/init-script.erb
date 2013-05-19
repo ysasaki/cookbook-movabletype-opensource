@@ -4,19 +4,60 @@
 
 PERL5LIB="/var/www/<%= node['movabletype-opensource']['domain'] %>/cgi-bin/mt/extlib:/var/www/<%= node['movabletype-opensource']['domain'] %>/cgi-bin/mt/lib"
 
-start_server="/usr/local/perl-5.16/bin/start_server"
+user="<%= node['movabletype-opensource']['owner'] %>"
+group="<%= node['movabletype-opensource']['group'] %>"
+start_server="<%= node['movabletype-opensource']['perl_install_path'] %>/bin/start_server"
+starman="<%= node['movabletype-opensource']['perl_install_path'] %>/bin/starman"
+workers=<%= node['movabletype-opensource']['workers'] %>
+port=<%= node['movabletype-opensource']['psgi_port'] %>
+app="/var/www/<%= node['movabletype-opensource']['domain'] %>/cgi-bin/mt/mt.psgi"
 pid_file="/var/run/movabletype"
 status_file="/var/run/movabletype-status"
+log="/var/log/movabletype-opensource.log"
+
+start() {
+    PERL5LIB=${PERL5LIB} \
+    nohup ${start_server} \
+        --port=${port} \
+        --signal-on-hup=QUIT \
+        --pid-file=${pid_file} \
+        --status-file=${status_file} -- \
+            ${starman} \
+            --user=${user} \
+            --group=${group} \
+            --workers=${workers} \
+            --max-reqs-per-child=10000 \
+            --interval=1 \
+            --preload-app \
+            -E production \
+            -a ${app} 1>${log} 2>&1 &
+}
+
+stop() {
+    kill -TERM $(cat ${pid_file})
+}
+
+graceful() {
+    PERL5LIB=${PERL5LIB} \
+    ${start_server} \
+        --restart \
+        --pid-file=${pid_file} \
+        --status-file=${status_file}
+}
 
 case "$1" in 
     start)
-        PERL5LIB=${PERL5LIB} ${start_server} --port=<%= node['movabletype-opensource']['psgi_port'] %> --signal-on-hup=QUIT --pid-file=${pid_file} --status-file=${status_file} -- /usr/local/perl-5.16/bin/plackup -s Starman -E production --workers=2 --max-reqs-per-child=10000 --interval=1 /var/www/<%= node['movabletype-opensource']['domain'] %>/cgi-bin/mt/mt.psgi &
-        ;;
-    restart)
-        PERL5LIB=${PERL5LIB} ${start_server} --restart --pid-file=${pid_file} --status-file=${status_file} && exit 0
+        start
         ;;
     stop)
-        kill -TERM $(cat ${pid_file}) && exit 0
+        stop
+        ;;
+    restart)
+        stop
+        start
+        ;;
+    graceful)
+        graceful
         ;;
     *)
         exit 2;
