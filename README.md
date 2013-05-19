@@ -35,18 +35,18 @@ Attributes
 
 #### movabletype-opensource::default
 
-* `default['movabletype-opensource']['domain']` - "mt.example.com"
-* `default['movabletype-opensource']['owner']` - "apache"
-* `default['movabletype-opensource']['group']` - "apache"
-* `default['movabletype-opensource']['database']` - "movabletype"
-* `default['movabletype-opensource']['dbuser']` - "movabletype"
-* `default['movabletype-opensource']['dbpassword']` - "movabletype"
-* `default['movabletype-opensource']['dbpassword']` - "movabletype"
-* `default['movabletype-opensource']['default_language']` - "ja"
-* `default['movabletype-opensource']['workers']` - 2
-* `default['movabletype-opensource']['psgi_port']` - 80
-* `default['movabletype-opensource']['perl_install_path']` - "/usr/local/perl-5.16"
-* `default['movabletype-opensource']['perl_version']` - "5.16.3"
+* `node['movabletype-opensource']['domain']` - "mt.example.com"
+* `node['movabletype-opensource']['owner']` - "apache"
+* `node['movabletype-opensource']['group']` - "apache"
+* `node['movabletype-opensource']['database']` - "movabletype"
+* `node['movabletype-opensource']['dbuser']` - "movabletype"
+* `node['movabletype-opensource']['dbpassword']` - "movabletype"
+* `node['movabletype-opensource']['dbpassword']` - "movabletype"
+* `node['movabletype-opensource']['node_language']` - "ja"
+* `node['movabletype-opensource']['workers']` - 2
+* `node['movabletype-opensource']['psgi_port']` - 80
+* `node['movabletype-opensource']['perl_install_path']` - "/usr/local/perl-5.16"
+* `node['movabletype-opensource']['perl_version']` - "5.16.3"
 
 Chef Solo
 ---------
