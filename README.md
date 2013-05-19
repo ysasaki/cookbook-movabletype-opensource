@@ -1,65 +1,105 @@
-movabletype-opensource Cookbook
-===============================
-Install MTOS 
+Movable Type Open Source Cookbook
+=================================
+
+Installs/Configures Movable Type Open Source
+
+* Reverse Proxy and Server static contents - Nginx
+* Database - MySQL
+* PSGI Server - Starman
+
+This cookbook is based on [デザイナー必見！VPSで高速なMovable Type用サーバをゼロから構築する方法(How to setup Movable Type on VPS for Designers)](http://www.skyarc.co.jp/engineerblog/entry/movabletype_psgi_mysql.html).  
+Thanks to [@onagatani](https://twitter.com/onagatani) and [SKYARC CO.,Ltd.](http://www.skyarc.co.jp)
 
 Requirements
 ------------
-TODO: List your cookbook requirements. Be sure to include any requirements this cookbook has on platforms, libraries, other cookbooks, packages, operating systems, etc.
 
-e.g.
-#### packages
-- `toaster` - movabletype-opensource needs toaster to brown your bagel.
+Platform
+--------
+
+* CentOS
+
+Tested on:
+
+* CentOS release 6.4 (Final)
+
+Packages
+--------
+
+* `nginx`
+* `mysql` - client and server
+* `yum::epel`
+* `simple_iptables`
 
 Attributes
 ----------
-TODO: List you cookbook attributes here.
 
-e.g.
 #### movabletype-opensource::default
-<table>
-  <tr>
-    <th>Key</th>
-    <th>Type</th>
-    <th>Description</th>
-    <th>Default</th>
-  </tr>
-  <tr>
-    <td><tt>['movabletype-opensource']['bacon']</tt></td>
-    <td>Boolean</td>
-    <td>whether to include bacon</td>
-    <td><tt>true</tt></td>
-  </tr>
-</table>
 
-Usage
------
-#### movabletype-opensource::default
-TODO: Write usage instructions for each cookbook.
+* `default['movabletype-opensource']['domain']` - "mt.example.com"
+* `default['movabletype-opensource']['owner']` - "apache"
+* `default['movabletype-opensource']['group']` - "apache"
+* `default['movabletype-opensource']['database']` - "movabletype"
+* `default['movabletype-opensource']['dbuser']` - "movabletype"
+* `default['movabletype-opensource']['dbpassword']` - "movabletype"
+* `default['movabletype-opensource']['dbpassword']` - "movabletype"
+* `default['movabletype-opensource']['default_language']` - "ja"
+* `default['movabletype-opensource']['workers']` - 2
+* `default['movabletype-opensource']['psgi_port']` - 80
+* `default['movabletype-opensource']['perl_install_path']` - "/usr/local/perl-5.16"
+* `default['movabletype-opensource']['perl_version']` - "5.16.3"
 
-e.g.
-Just include `movabletype-opensource` in your node's `run_list`:
-
+Chef Solo
+---------
 ```json
 {
-  "name":"my_node",
-  "run_list": [
-    "recipe[movabletype-opensource]"
-  ]
+    "run_list": [
+        "yum::epel",
+        "nginx",
+        "simple_iptables",
+        "mysql::server",
+        "mysql::client",
+        "movabletype-opensource"
+    ],
+    "movabletype-opensource": {
+        "psgi_port": "8080",
+        "owner": "nginx",
+        "group": "nginx"
+    },
+    "mysql": {
+        "server_root_password": "secret",
+        "server_repl_password": "secret",
+        "server_debian_password": "secret",
+        "tunable": {
+            "remove_anonymous_users": true,
+            "remove_test_database": true,
+            "key_buffer_size": "32M",
+            "max_connections": "128",
+            "server_id": "1",
+            "log_bin": "/var/lib/mysql/mysql-bin",
+            "sync_bin_log": "1",
+            "log_error": "/var/log/mysql/mysql-error.log"
+        }
+    },
+    "simple_iptables": {
+        "rules": {
+            "filter" : [
+                "-A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT",
+                "-A INPUT -p icmp -j ACCEPT",
+                "-A INPUT -i lo -j ACCEPT",
+                "-A INPUT -m state --state NEW -m tcp -p tcp --dport 22 -j ACCEPT",
+                "-A INPUT -m state --state NEW -m tcp -p tcp --dport 80 -j ACCEPT",
+                "-A INPUT -m state --state NEW -m tcp -p tcp --dport 443 -j ACCEPT",
+                "-A INPUT -j REJECT --reject-with icmp-host-prohibited",
+                "-A FORWARD -j REJECT --reject-with icmp-host-prohibited"
+            ]
+        }
+    }
 }
 ```
 
-Contributing
-------------
-TODO: (optional) If this is a public cookbook, detail the process for contributing. If this is a private cookbook, remove this section.
-
-e.g.
-1. Fork the repository on Github
-2. Create a named feature branch (like `add_component_x`)
-3. Write you change
-4. Write tests for your change (if applicable)
-5. Run the tests, ensuring they all pass
-6. Submit a Pull Request using Github
-
 License and Authors
 -------------------
-Authors: TODO: List authors
+
+The MIT License (MIT)
+
+Copyright (c) 2013 Yoshihiro Sasaki
