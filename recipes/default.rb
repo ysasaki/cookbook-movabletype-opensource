@@ -153,6 +153,22 @@ bash "change_perl_path" do
   EOH
 end
 
+# crontab
+template "#{mt_root}/crontab" do
+  user "#{user}"
+  group "#{group}"
+  action :create
+  source "crontab.erb"
+  mode 0644
+end
+
+bash "set run-periodic-tasks" do
+  user "root"
+  code <<-EOH
+  crontab -u #{user} #{mt_root}/crontab
+  EOH
+end
+
 # setup starman + start_server 
 template "/etc/init.d/movabletype" do
   user "root"
