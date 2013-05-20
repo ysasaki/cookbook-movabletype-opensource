@@ -60,11 +60,20 @@ git "/var/www/#{domain}/cgi-bin" do
     repository "git://github.com/movabletype/movabletype.git"
     reference "master"
     depth 1
-    destination "/var/www/#{domain}/cgi-bin/mt"
+    destination "#{mt_root}/cgi-bin/mt"
     action :checkout
     user "#{user}"
     group "#{group}"
 end
+
+bash "mv mt-static dir" do
+  user "#{user}"
+  group "#{group}"
+  code <<-EOH
+  mv #{mt_root}/cgi-bin/mt/mt-static #{mt_root}/htdocs
+  EOH
+end
+
 
 # Revese Proxy
 template "/etc/nginx/sites-available/001-movabletype.conf" do
