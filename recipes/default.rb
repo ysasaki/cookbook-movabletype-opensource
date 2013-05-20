@@ -8,8 +8,8 @@
 #
 
 domain       = node['movabletype-opensource']['domain']
-owner        = node['movabletype-opensource']['owner']
-group        = node['movabletype-opensource']['group']
+user         = node['movabletype-opensource']['user']
+group        = user
 psgi_port    = node['movabletype-opensource']['psgi_port']
 perl_path    = node['movabletype-opensource']['perl_install_path']
 perl_version = node['movabletype-opensource']['perl_version']
@@ -34,9 +34,15 @@ cpanm     = "#{mt_root}/cpanm"
     package pkg
 end
 
+# create user
+user user do
+    action :create
+    system true
+end
+
 # mt
 directory "/var/www/#{domain}" do
-    owner "#{owner}"
+    owner "#{user}"
     group "#{group}"
     action :create
     recursive true
@@ -44,7 +50,7 @@ end
 
 %w{ htdocs logs cgi-bin }.each do |dir| 
     directory "/var/www/#{domain}/#{dir}" do 
-        owner "#{owner}"
+        owner "#{user}"
         group "#{group}"
         action :create
     end
@@ -56,7 +62,7 @@ git "/var/www/#{domain}/cgi-bin" do
     depth 1
     destination "/var/www/#{domain}/cgi-bin/mt"
     action :checkout
-    user "#{owner}"
+    user "#{user}"
     group "#{group}"
 end
 
@@ -64,7 +70,7 @@ end
 template "/etc/nginx/sites-available/001-movabletype.conf" do
     action :create
     source "nginx.conf.erb"
-    owner "#{owner}"
+    owner "#{user}"
     group "#{group}"
     mode 0644
 end
@@ -79,7 +85,7 @@ end
 template "/var/www/#{domain}/cgi-bin/mt/mt-config.cgi" do 
     action :create
     source "mt-config.cgi.erb"
-    owner "#{owner}"
+    owner "#{user}"
     group "#{group}"
     mode 0644
 end
@@ -103,7 +109,8 @@ end
 # perl
 bash "install_cpanm" do
   not_if { File.exists?(cpanm) }
-  user "root"
+  user "#{user}"
+  group "#{group}"
   cwd "#{mt_root}"
   code <<-EOH
   curl -LO http://xrl.us/cpanm
@@ -113,7 +120,7 @@ end
 
 bash "install_perl_build" do
   not_if { File.exists?("#{perl_path}/bin/perl") }
-  user "root"
+  user "#{user}"
   code <<-EOH
   curl https://raw.github.com/tokuhirom/Perl-Build/master/perl-build | perl - #{perl_version} #{perl_path}
   EOH
@@ -121,13 +128,16 @@ end
 
 # install modules for mt
 template "#{mt_root}/cpanfile" do
-    action :create
-    source "cpanfile.erb"
-    mode 0644
+  action :create
+  source "cpanfile.erb"
+  user "#{user}"
+  group "#{user}"
+  mode 0644
 end
 
 bash "install_perl_module" do
   user "root"
+  group "root"
   cwd "#{mt_root}"
   code <<-EOH
   #{perl_path}/bin/perl #{cpanm} --installdeps .
@@ -137,6 +147,7 @@ end
 # change shebang
 bash "change_perl_path" do
   user "root"
+  group "root"
   code <<-EOH
   find #{mt_root}/cgi-bin/mt -name '*.cgi' | xargs perl -i -ple 's{/usr/bin/perl}{#{perl_path}/bin/perl}g'
   EOH
@@ -144,9 +155,10 @@ end
 
 # setup starman + start_server 
 template "/etc/init.d/movabletype" do
-    action :create
-    source "init-script.erb"
-    mode 0755
+  user "root"
+  action :create
+  source "init-script.erb"
+  mode 0755
 end
 
 service "movabletype" do

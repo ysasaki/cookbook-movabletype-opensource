@@ -11,8 +11,7 @@
 default['movabletype-opensource']['domain'] = "mt.example.com"
 
 # for installation and web workers
-default['movabletype-opensource']['owner'] = "apache"
-default['movabletype-opensource']['group'] = "apache"
+default['movabletype-opensource']['user'] = "movabletype"
 
 # MT MySQL
 default['movabletype-opensource']['database'] = "movabletype"

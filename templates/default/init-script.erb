@@ -4,8 +4,8 @@
 
 PERL5LIB="/var/www/<%= node['movabletype-opensource']['domain'] %>/cgi-bin/mt/extlib:/var/www/<%= node['movabletype-opensource']['domain'] %>/cgi-bin/mt/lib"
 
-user="<%= node['movabletype-opensource']['owner'] %>"
-group="<%= node['movabletype-opensource']['group'] %>"
+user="<%= node['movabletype-opensource']['user'] %>"
+group="<%= node['movabletype-opensource']['user'] %>"
 start_server="<%= node['movabletype-opensource']['perl_install_path'] %>/bin/start_server"
 starman="<%= node['movabletype-opensource']['perl_install_path'] %>/bin/starman"
 workers=<%= node['movabletype-opensource']['workers'] %>
@@ -13,7 +13,7 @@ port=<%= node['movabletype-opensource']['psgi_port'] %>
 app="/var/www/<%= node['movabletype-opensource']['domain'] %>/cgi-bin/mt/mt.psgi"
 pid_file="/var/run/movabletype"
 status_file="/var/run/movabletype-status"
-log="/var/log/movabletype-opensource.log"
+log="/var/www/<%= node['movabletype-opensource']['domain'] %>/logs/start_server.log"
 
 start() {
     PERL5LIB=${PERL5LIB} \
