@@ -59,9 +59,7 @@ Chef Solo
         "movabletype-opensource"
     ],
     "movabletype-opensource": {
-        "psgi_port": "8080",
-        "owner": "nginx",
-        "group": "nginx"
+        "psgi_port": "8080"
     },
     "mysql": {
         "server_root_password": "secret",
