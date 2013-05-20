@@ -1,0 +1,1 @@
+*/5 * * * * cd /var/www/<%= node['movabletype-opensource']['domain'] %>/cgi-bin/mt; /usr/bin/setlock -nx /tmp/<%= node['movabletype-opensource']['domain'] %>.lock <%= node['movabletype-opensource']['perl_install_path'] %>/bin/perl ./tools/run-periodic-tasks
