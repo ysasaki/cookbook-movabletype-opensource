@@ -17,7 +17,6 @@ default['movabletype-opensource']['user'] = "movabletype"
 default['movabletype-opensource']['database'] = "movabletype"
 default['movabletype-opensource']['dbuser'] = "movabletype"
 default['movabletype-opensource']['dbpassword'] = "movabletype"
-default['movabletype-opensource']['dbpassword'] = "movabletype"
 
 # MT Default language
 default['movabletype-opensource']['default_language'] = "ja"
