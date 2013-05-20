@@ -6,8 +6,8 @@ server {
     listen 80;
     server_name <%= node['movabletype-opensource']['domain'] %>;
     root /var/www/<%= node['movabletype-opensource']['domain'] %>/htdocs;
-    access_log  /var/www/<%= node['movabletype-opensource']['domain'] %>/logs/access.log;
-    error_log   /var/www/<%= node['movabletype-opensource']['domain'] %>/logs/error.log warn;
+    access_log  /var/log/nginx/<%= node['movabletype-opensource']['domain'] %>-access.log;
+    error_log   /var/log/nginx/<%= node['movabletype-opensource']['domain'] %>-error.log warn;
     gzip on;
 
     server_tokens off;
