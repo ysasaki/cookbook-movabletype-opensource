@@ -23,7 +23,7 @@ default['movabletype-opensource']['default_language'] = "ja"
 
 # Starman
 default['movabletype-opensource']['workers'] = 2
-default['movabletype-opensource']['psgi_port'] = 80
+default['movabletype-opensource']['psgi_port'] = 8080
 
 # perl
 default['movabletype-opensource']['perl_install_path'] = "/usr/local/perl-5.16"
