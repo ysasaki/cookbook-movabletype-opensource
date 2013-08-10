@@ -58,7 +58,7 @@ end
 
 git "/var/www/#{domain}/cgi-bin" do 
     repository "git://github.com/movabletype/movabletype.git"
-    reference "master"
+    reference "db7ee40ddc7c0309a4bd132cfb5d402be7987009"
     depth 1
     destination "#{mt_root}/cgi-bin/mt"
     action :checkout
@@ -67,6 +67,7 @@ git "/var/www/#{domain}/cgi-bin" do
 end
 
 bash "mv mt-static dir" do
+  only_if { File.exists?("#{mt_root}/cgi-bin/mt/mt-static") }
   user "#{user}"
   group "#{group}"
   code <<-EOH
@@ -129,7 +130,6 @@ end
 
 bash "install_perl_build" do
   not_if { File.exists?("#{perl_path}/bin/perl") }
-  user "#{user}"
   code <<-EOH
   curl https://raw.github.com/tokuhirom/Perl-Build/master/perl-build | perl - #{perl_version} #{perl_path}
   EOH
