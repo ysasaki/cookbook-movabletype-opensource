@@ -19,6 +19,7 @@ cpanm     = "#{mt_root}/cpanm"
 
 # dependencies
 %w{
+    crontabs
     git
     curl
     db4-devel
